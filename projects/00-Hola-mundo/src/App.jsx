@@ -1,24 +1,41 @@
-import './App.css'
-import { TwitterFollowCard } from './TwitterFollowCard'
+import "./App.css";
+import { TwitterFollowCard } from "./TwitterFollowCard";
 
-function App() {
+const users = [
+  {
+    userName: "emanuelpesci",
+    name: "Emanuel Pesci",
+    isFollowing: true,
+  },
+  {
+    userName: "kikobeats",
+    name: "Kiko Beats",
+    isFollowing: false,
+  },
+  {
+    userName: "midudev",
+    name: "Miguel Angel Dúran",
+    isFollowing: false,
+  },
+  {
+    userName: "lionelmessi",
+    name: "Lionel Messi",
+    isFollowing: true,
+  },
+];
 
-    return (
-        <section className='App'>
-            <TwitterFollowCard userName='emanuelpesci' initialIsFollowing >
-                Emanunel Pesci
-            </TwitterFollowCard>
-            <TwitterFollowCard userName="kikobeats"  >
-                Kiko Beats
-            </TwitterFollowCard>
-            <TwitterFollowCard userName="midudev" >
-                Miguel Angel Dúran
-            </TwitterFollowCard>
-            <TwitterFollowCard userName='lionelmessi' initialIsFollowing>
-                Lionel Messi
-            </TwitterFollowCard>
-        </section>
-    )
+export default function App() {
+  return (
+    <section className="App">
+      {users.map(({ userName, name, isFollowing }) => (
+        <TwitterFollowCard
+          userName={userName}
+          key={userName}
+          initialIsFollowing={isFollowing}
+        >
+          {name}
+        </TwitterFollowCard>
+      ))}
+    </section>
+  );
 }
-
-export default App
