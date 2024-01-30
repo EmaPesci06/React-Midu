@@ -16,7 +16,7 @@ function App() {
       console.log("search", search);
       getMovies({ search });
     }, 300),
-    [getMovies]
+    []
   );
 
   const handleSubmit = (e) => {
