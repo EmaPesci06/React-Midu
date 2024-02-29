@@ -6,9 +6,9 @@ interface Props {
   showColors: boolean
   users: User[]
 }
-export function UsersList ({ changeSorting, deleteUser, showColors, users }: Props) {
+export function UsersList ({ changeSorting, deleteUser, showColors, users }: Props): JSX.Element {
   return (
-    <table width='100%' style={{ marginTop: '22px' }}>
+    <table width='100%'>
       <thead>
         <tr>
           <th>Foto</th>
@@ -22,9 +22,9 @@ export function UsersList ({ changeSorting, deleteUser, showColors, users }: Pro
       <tbody className={showColors ? 'table--showColors' : ''}>
         {users.map((user) => {
           return (
-            <tr key={user.email}>
+            <tr key={user.login.uuid}>
               <td>
-                <img src={user.picture.thumbnail} alt="" />
+                <img src={user.picture.thumbnail} alt={user.name.first} />
               </td>
               <td>{user.name.first}</td>
               <td>{user.name.last}</td>

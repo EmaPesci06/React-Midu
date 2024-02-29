@@ -1,48 +1,38 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import './App.css'
 import { UsersList } from './components/UsersLists'
 import { SortBy, type User } from './types.d'
+import { useUsers } from './hooks/useUsers'
 
-const API_URL = 'https://randomuser.me/api/?results=100'
+function App (): JSX.Element {
+  const { isLoading, isError, users, refetch, fetchNextPage, hasNextPage } = useUsers()
 
-function App () {
-  const [users, setUsers] = useState<User[]>([])
   const [showColor, setShowColor] = useState(false)
   const [sorting, setSorting] = useState<SortBy>(SortBy.NONE)
-  const originalUsers = useRef<User[]>([])
+  // const originalUsers = useRef<User[]>([])
   const [filterCountry, setFilterCountry] = useState<string | null>(null)
 
-  const toggleColors = () => {
+  const toggleColors = (): void => {
     setShowColor(!showColor)
   }
 
-  const handleReset = () => {
-    setUsers(originalUsers.current)
+  const handleReset = async () => {
+    void refetch()
+    // setUsers(originalUsers.current)
   }
 
-  const toggleSortByCountry = () => {
+  const toggleSortByCountry = (): void => {
     const newSortingValue = sorting === SortBy.NONE ? SortBy.COUNTRY : SortBy.NONE
     setSorting(newSortingValue)
   }
 
-  const handleDelete = (email: string) => {
-    const filteredUsers = users.filter((user) => user.email !== email)
-    setUsers(filteredUsers)
+  const handleDelete = (email: string): void => {
+    // setUsers(filteredUsers)
   }
 
-  const handleChangeSort = (sort: SortBy) => {
+  const handleChangeSort = (sort: SortBy): void => {
     setSorting(sort)
   }
-
-  useEffect(() => {
-    fetch(API_URL)
-      .then(async res => await res.json())
-      .then(data => {
-        setUsers(data.results)
-        originalUsers.current = data.results
-      })
-      .catch(err => { console.error(err) })
-  }, [])
 
   const filteredUsers = useMemo(() => {
     return typeof filterCountry === 'string' && filterCountry.length > 0
@@ -74,12 +64,21 @@ function App () {
       <header>
         <button onClick={toggleColors}>Colorear filas</button>
         <button onClick={toggleSortByCountry}>{sorting === SortBy.COUNTRY ? 'No ordenar por pais' : 'Ordenar por pais'}</button>
-        <button onClick={handleReset}>Resetear</button>
-        <input placeholder='Filtra por pais' onChange={(e) => {
-          setFilterCountry(e.target.value)
-        }} />
+        <button onClick={handleReset as () => void}>Resetear</button>
+        <input
+          placeholder='Filtra por pais' onChange={(e) => {
+            setFilterCountry(e.target.value)
+          }}
+        />
       </header>
-      <UsersList changeSorting={handleChangeSort} deleteUser={handleDelete} showColors={showColor} users={sortedUsers}/>
+      <main>
+        {users.length > 0 &&
+          <UsersList changeSorting={handleChangeSort} deleteUser={handleDelete} showColors={showColor} users={sortedUsers} />}
+        {isLoading && <strong>Cargando...</strong>}
+        {isError && <p>Hubo un error</p>}
+        {!isLoading && !isError && users.length === 0 && <p>No hay usuarios</p>}
+        {!isLoading && !isError && hasNextPage && <button onClick={() => void fetchNextPage()}>Cargar mas componentes</button>}
+      </main>
     </>
   )
 }
